@@ -2,14 +2,7 @@
 # This file automatically deploys all services
 
 [build]
-
 builder = "NIXPACKS"
-
-# Template variables: erscheinen im Deploy-Dialog bei Template-Nutzung
-[variables]
-TELEGRAM_BOT_TOKEN = "XXX"  # Dein Bot-Token von @BotFather
-TELEGRAM_GROUP_ID  = "XXX"  # ID der Ziel-Gruppe oder des Chats
-TELEGRAM_OWNER_ID  = "XXX"  # Deine eigene Telegram-User-ID
 
 # PostgreSQL Database
 [[services]]
@@ -17,8 +10,8 @@ name = "postgres"
 image = "postgres:16-alpine"
 
   [services.postgres.variables]
-  POSTGRES_DB       = "tradingbot"
-  POSTGRES_USER     = "postgres"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
   [[services.postgres.volumes]]
@@ -32,21 +25,20 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
   # Internal Railway connection to Postgres
-  POSTGRES_HOST     = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT     = "5432"
-  POSTGRES_DB       = "tradingbot"
-  POSTGRES_USER     = "postgres"
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DATABASE_URL      = "${postgres.RAILWAY_URL}"
-  DOCKER_ENV        = "true"
-
-  # Binance API placeholders: nach Deploy unter Services → trading-bot → Variables befüllen
-  API_KEY           = "XXX"
-  API_SECRET        = "XXX"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  DOCKER_ENV = "true"
+  # Binance API placeholders
+  API_KEY = "YOUR_API_KEY"
+  API_SECRET = "YOUR_API_SECRET"
 
   [services.trading-bot.deploy]
-  restartPolicyType     = "ON_FAILURE"
-  restartPolicyMaxRetries= 10
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 10
 
 # Telegram Bot Service  
 [[services]]
@@ -55,18 +47,17 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
   # Internal Railway connection to Postgres
-  POSTGRES_HOST     = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT     = "5432"
-  POSTGRES_DB       = "tradingbot"
-  POSTGRES_USER     = "postgres"
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DATABASE_URL      = "${postgres.RAILWAY_URL}"
-
-  # Telegram variables: erscheinen im Template-Deploy-Dialog, ansonsten manuell im UI hinzufügen
-  TELEGRAM_BOT_TOKEN  = "${{variables.TELEGRAM_BOT_TOKEN}}"
-  TELEGRAM_GROUP_ID   = "${{variables.TELEGRAM_GROUP_ID}}"
-  TELEGRAM_OWNER_ID   = "${{variables.TELEGRAM_OWNER_ID}}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Telegram placeholders
+  TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+  TELEGRAM_GROUP_ID = "YOUR_TELEGRAM_GROUP_ID"
+  TELEGRAM_OWNER_ID = "YOUR_TELEGRAM_OWNER_ID"
 
   [services.telegram-bot.deploy]
-  restartPolicyType     = "ON_FAILURE"
-  restartPolicyMaxRetries= 5
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 5
