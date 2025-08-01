@@ -2,7 +2,7 @@
 # This file automatically deploys all services
 
 [build]
-builder = "nixpacks"
+builder = "NIXPACKS"
 
 # PostgreSQL Database
 [[services]]
@@ -12,8 +12,7 @@ image = "postgres:16-alpine"
   [services.postgres.variables]
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
-  # Railway generiert automatisch ein sicheres Passwort
-  POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
+  POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
@@ -25,19 +24,18 @@ name = "trading-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
-  # Interne Railway Verbindung zu Postgres
-  POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
   DOCKER_ENV = "true"
-  
-  # Platzhalter für Binance API - User muss diese nach Deploy setzen
+  # Binance API placeholders
   API_KEY = ""
   API_SECRET = ""
 
-  # Restart bei Fehler
   [services.trading-bot.deploy]
   restartPolicyType = "ON_FAILURE"
   restartPolicyMaxRetries = 10
@@ -48,19 +46,18 @@ name = "telegram-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
-  # Interne Railway Verbindung zu Postgres
-  POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"
-  
-  # Platzhalter für Telegram - User muss diese nach Deploy setzen
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Telegram placeholders
   TELEGRAM_BOT_TOKEN = ""
   TELEGRAM_GROUP_ID = ""
   TELEGRAM_OWNER_ID = ""
 
-  # Restart bei Fehler
   [services.telegram-bot.deploy]
   restartPolicyType = "ON_FAILURE"
   restartPolicyMaxRetries = 5
