@@ -1,42 +1,63 @@
-# UnCoded Trading Bot - Railway Konfiguration
+# UnCoded Trading Bot - Railway Configuration
+# This file automatically deploys all services
+
 [build]
 builder = "NIXPACKS"
 
-# Service 1: PostgreSQL Datenbank
+# PostgreSQL Database
 [[services]]
 name = "postgres"
 image = "postgres:16-alpine"
-restartPolicy = "on-failure"
+
   [services.postgres.variables]
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
+
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
   name = "postgres-data"
 
-# Service 2: Der Trading-Bot
+# Trading Bot Service
 [[services]]
 name = "trading-bot"
-image = "./"
-restartPolicy = "on-failure"
+image = "aureumvictoria/unCodedBotDocker:latest"
+
   [services.trading-bot.variables]
+  # Internal Railway connection to Postgres
   POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DOCKER_ENV = "false"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  DOCKER_ENV = "true"
+  # Binance API placeholders
+  API_KEY = ""
+  API_SECRET = ""
 
-# Service 3: Der Telegram-Bot
+  [services.trading-bot.deploy]
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 10
+
+# Telegram Bot Service  
 [[services]]
 name = "telegram-bot"
-image = "./"
-startCommand = "node tgbot.js"
-restartPolicy = "on-failure"
+image = "aureumvictoria/unCodedBotDocker:latest"
+
   [services.telegram-bot.variables]
+  # Internal Railway connection to Postgres
   POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Telegram placeholders
+  TELEGRAM_BOT_TOKEN = ""
+  TELEGRAM_GROUP_ID = ""
+  TELEGRAM_OWNER_ID = ""
+
+  [services.telegram-bot.deploy]
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 5
