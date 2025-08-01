@@ -1,6 +1,6 @@
 # UnCoded Trading Bot - Finale Railway Konfiguration für Docker Hub
 [build]
-builder = "NIXPACKS" # Wird ignoriert, da wir fertige Images verwenden, aber schadet nicht
+builder = "Dockerfiles"
 
 # Service 1: PostgreSQL Datenbank
 [[services]]
