@@ -1,4 +1,4 @@
-# UnCoded Trading Bot - Railway Konfiguration (Angepasste Variablen-Referenzen)
+# UnCoded Trading Bot - Finale Railway Konfiguration
 [build]
 builder = "NIXPACKS"
 
@@ -9,7 +9,7 @@ image = "postgres:16-alpine"
 restartPolicy = "on-failure"
   [services.postgres.variables]
   POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
+  POSTG-RES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
@@ -21,12 +21,14 @@ name = "trading-bot"
 image = "./"
 restartPolicy = "on-failure"
   [services.trading-bot.variables]
-  # NEU: Wir referenzieren jetzt die PG... Variablen direkt.
+  # Einzelne Variablen für deinen Code
   POSTGRES_HOST = "${postgres.PGHOST}"
   POSTGRES_PORT = "${postgres.PGPORT}"
   POSTGRES_DB = "${postgres.PGDATABASE}"
   POSTGRES_USER = "${postgres.PGUSER}"
   POSTGRES_PASSWORD = "${postgres.PGPASSWORD}"
+  # HINZUGEFÜGT: Der vollständige Verbindungs-String als Fallback
+  DATABASE_URL = "postgresql://${postgres.PGUSER}:${postgres.PGPASSWORD}@${postgres.PGHOST}:${postgres.PGPORT}/${postgres.PGDATABASE}"
   DOCKER_ENV = "true"
   API_KEY = "" 
   API_SECRET = ""
@@ -38,12 +40,14 @@ image = "./"
 startCommand = "node tgbot.js"
 restartPolicy = "on-failure"
   [services.telegram-bot.variables]
-  # NEU: Auch hier referenzieren wir die PG... Variablen direkt.
+  # Einzelne Variablen für deinen Code
   POSTGRES_HOST = "${postgres.PGHOST}"
   POSTGRES_PORT = "${postgres.PGPORT}"
   POSTGRES_DB = "${postgres.PGDATABASE}"
   POSTGRES_USER = "${postgres.PGUSER}"
   POSTGRES_PASSWORD = "${postgres.PGPASSWORD}"
+  # HINZUGEFÜGT: Der vollständige Verbindungs-String als Fallback
+  DATABASE_URL = "postgresql://${postgres.PGUSER}:${postgres.PGPASSWORD}@${postgres.PGHOST}:${postgres.PGPORT}/${postgres.PGDATABASE}"
   TELEGRAM_BOT_TOKEN = ""
   TELEGRAM_GROUP_ID = ""
   TELEGRAM_OWNER_ID = ""
