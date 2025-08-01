@@ -1,6 +1,6 @@
 services:
   - type: worker
-    name: tradingbot1
+    name: tradingbot2
     env: docker
     image:
       url: docker.io/aureumvictoria/trading-bot-secure:latest
