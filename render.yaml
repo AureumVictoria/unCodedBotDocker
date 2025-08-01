@@ -1,7 +1,7 @@
 databases:
   - name: trading-postgres
     databaseName: tradingbot
-    user: postgres
+    user: tradingbot  # Geändert von "postgres" zu "tradingbot"
     plan: starter
     region: oregon
     ipAllowList: []
@@ -23,7 +23,9 @@ services:
           name: trading-postgres
           property: host
       - key: POSTGRES_PORT
-        value: "5432"
+        fromDatabase:
+          name: trading-postgres
+          property: port
       - key: POSTGRES_DB
         fromDatabase:
           name: trading-postgres
@@ -60,11 +62,17 @@ services:
           name: trading-postgres
           property: host
       - key: POSTGRES_PORT
-        value: "5432"
+        fromDatabase:
+          name: trading-postgres
+          property: port
       - key: POSTGRES_DB
-        value: tradingbot
+        fromDatabase:
+          name: trading-postgres
+          property: database
       - key: POSTGRES_USER
-        value: postgres
+        fromDatabase:
+          name: trading-postgres
+          property: user
       - key: POSTGRES_PASSWORD
         fromDatabase:
           name: trading-postgres
