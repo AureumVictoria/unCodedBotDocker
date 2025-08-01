@@ -26,13 +26,14 @@ image = "aureumvictoria/unCodedBotDocker:latest"
   [services.trading-bot.variables]
   # Nutze den DOCKER_ENV-Branch für individuelle PG-Variablen
   DOCKER_ENV        = "true"
-  POSTGRES_HOST     = "${postgres.PGHOST}"
-  POSTGRES_PORT     = "${postgres.PGPORT}"
-  POSTGRES_DB       = "${postgres.PGDATABASE}"
-  POSTGRES_USER     = "${postgres.PGUSER}"
-  POSTGRES_PASSWORD = "${postgres.PGPASSWORD}"
-  # Fallback für Bibliotheken, die DATABASE_URL brauchen
-  DATABASE_URL      = "${postgres.RAILWAY_URL}"
+  # Korrekte Railway-Interpolation für deine Postgres-Instanz
+  POSTGRES_HOST     = "${{trading-postgres.RAILWAY_PRIVATE_DOMAIN}}"
+  POSTGRES_PORT     = "${{trading-postgres.RAILWAY_PORT}}"
+  POSTGRES_DB       = "${{trading-postgres.RAILWAY_DATABASE}}"
+  POSTGRES_USER     = "${{trading-postgres.RAILWAY_USER}}"
+  POSTGRES_PASSWORD = "${{trading-postgres.RAILWAY_PASSWORD}}"
+  # Fall­back für Libraries, die einen Connection String erwarten
+  DATABASE_URL      = "${{trading-postgres.RAILWAY_URL}}"
   # Binance API placeholders
   API_KEY           = ""
   API_SECRET        = ""
