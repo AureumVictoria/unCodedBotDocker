@@ -1,7 +1,7 @@
 ## 🚀 Quick Deploy on Railway
 
 ### 1. Deploy with One Click
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/github?repo=https://github.com/aureumvictoria/uncoded-bot-deploy)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/github?repo=https://github.com/aureumvictoria/unCodedBotDocker)
 
 ### 2. After Deploy (Important!)
 The bot needs your API keys to work:
