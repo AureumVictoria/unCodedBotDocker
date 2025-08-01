@@ -1,12 +1,12 @@
 # UnCoded Trading Bot - Railway Configuration
-# This file automatically deploys all services
+# Dieses File deployt alle Services automatisch
 
 [build]
-builder = "nixpacks"
+  builder = "nixpacks"
 
 # PostgreSQL Database
 [[services]]
-name = "postgres"
+name  = "postgres"
 image = "postgres:16-alpine"
 
   [services.postgres.variables]
@@ -16,38 +16,39 @@ image = "postgres:16-alpine"
 
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
-  name = "postgres-data"
+  name  = "postgres-data"
 
 # Trading Bot Service
 [[services]]
-name = "trading-bot"
+name  = "trading-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
-  # Verwende nur DATABASE_URL für die Verbindung
-  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Nutze den DOCKER_ENV-Branch für individuelle PG-Variablen
+  DOCKER_ENV        = "true"
+  POSTGRES_HOST     = "${postgres.PGHOST}"
+  POSTGRES_PORT     = "${postgres.PGPORT}"
+  POSTGRES_DB       = "${postgres.PGDATABASE}"
+  POSTGRES_USER     = "${postgres.PGUSER}"
+  POSTGRES_PASSWORD = "${postgres.PGPASSWORD}"
+  # Fallback für Bibliotheken, die DATABASE_URL brauchen
+  DATABASE_URL      = "${postgres.RAILWAY_URL}"
   # Binance API placeholders
-  API_KEY      = ""
-  API_SECRET   = ""
+  API_KEY           = ""
+  API_SECRET        = ""
 
   [services.trading-bot.deploy]
   restartPolicyType      = "ON_FAILURE"
   restartPolicyMaxRetries = 10
 
-# Telegram Bot Service  
+# Telegram Bot Service
 [[services]]
-name = "telegram-bot"
+name  = "telegram-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
-  # Internal Railway connection to Postgres
-  POSTGRES_HOST     = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT     = "5432"
-  POSTGRES_DB       = "tradingbot"
-  POSTGRES_USER     = "postgres"
-  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  # Nutzt nur DATABASE_URL für Verbindung
   DATABASE_URL      = "${postgres.RAILWAY_URL}"
-  # Telegram placeholders
   TELEGRAM_BOT_TOKEN = ""
   TELEGRAM_GROUP_ID  = ""
   TELEGRAM_OWNER_ID  = ""
