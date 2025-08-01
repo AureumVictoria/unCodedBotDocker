@@ -36,7 +36,7 @@ services:
           name: trading-postgres
           property: password
       - key: DOCKER_ENV
-        value: "true"
+        value: "false"
       # API Keys – Werte setzt du in der Render-UI
       - key: API_KEY
         sync: false
