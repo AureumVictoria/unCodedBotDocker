@@ -7,9 +7,9 @@ builder = "NIXPACKS"
 
 # Template variables: erscheinen im Deploy-Dialog bei Template-Nutzung
 [variables]
-TELEGRAM_BOT_TOKEN = ""  # Dein Bot-Token von @BotFather
-TELEGRAM_GROUP_ID  = ""  # ID der Ziel-Gruppe oder des Chats
-TELEGRAM_OWNER_ID  = ""  # Deine eigene Telegram-User-ID
+TELEGRAM_BOT_TOKEN = "XXX"  # Dein Bot-Token von @BotFather
+TELEGRAM_GROUP_ID  = "XXX"  # ID der Ziel-Gruppe oder des Chats
+TELEGRAM_OWNER_ID  = "XXX"  # Deine eigene Telegram-User-ID
 
 # PostgreSQL Database
 [[services]]
@@ -41,8 +41,8 @@ image = "aureumvictoria/unCodedBotDocker:latest"
   DOCKER_ENV        = "true"
 
   # Binance API placeholders: nach Deploy unter Services → trading-bot → Variables befüllen
-  API_KEY           = ""
-  API_SECRET        = ""
+  API_KEY           = "XXX"
+  API_SECRET        = "XXX"
 
   [services.trading-bot.deploy]
   restartPolicyType     = "ON_FAILURE"
