@@ -1,7 +1,6 @@
 # railway.toml
-# Korrigierte Konfiguration für den automatisierten Deploy von GitHub.
-# Railway liest diese Datei und baut die Dockerfiles direkt aus diesem Repository.
-# Docker Hub wird hierfür NICHT verwendet.
+# Finale, robusteste Konfiguration für den automatisierten Deploy von GitHub.
+# Diese Version verwendet die offizielle Standard-Syntax für Datenbank-Plugins.
 
 # Globale Build-Einstellungen
 [build]
@@ -16,24 +15,17 @@ restartPolicy = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 # --- Definition des Trading-Bot-Dienstes ---
-# Railway erstellt einen Dienst namens "trading-bot".
-# Das Image wird aus dem Dockerfile in "./trading-bot/" gebaut.
 [[services]]
 name = "trading-bot"
 dockerfilePath = "./trading-bot/Dockerfile"
-# Der Startbefehl (CMD) wird direkt aus deinem Dockerfile übernommen.
 
 # --- Definition des Telegram-Bot-Dienstes ---
-# Railway erstellt einen zweiten Dienst namens "telegram-bot".
-# Das Image wird aus dem Dockerfile in "./telegram-bot/" gebaut.
 [[services]]
 name = "telegram-bot"
 dockerfilePath = "./telegram-bot/Dockerfile"
-# Auch hier wird der Startbefehl (CMD) aus dem Dockerfile verwendet.
 
 # --- Definition des Datenbank-Dienstes ---
-# Diese explizite Syntax stellt sicher, dass der Datenbank-Dienst den Namen "postgres" erhält.
-# Dadurch funktionieren die Verweise in den Umgebungsvariablen (z.B. ${{postgres.PGHOST}}) korrekt.
-[[services]]
-name = "postgres"
-plugin = "postgresql"
+# Dies ist die offizielle Standard-Syntax. Sie erstellt einen von Railway
+# verwalteten PostgreSQL-Dienst. In der Railway-Oberfläche wird dieser
+# Dienst standardmäßig "PostgreSQL" heißen.
+[plugins.postgres]
