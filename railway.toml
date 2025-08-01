@@ -1,122 +1,63 @@
-# Railway Configuration File for UnCoded Trading Bot
-# Version: Fixed for manual environment variables
+# UnCoded Trading Bot - Railway Configuration
+# This file automatically deploys all services
 
 [build]
 builder = "nixpacks"
 
-# ===========================================
-# PostgreSQL Database Service
-# ===========================================
+# PostgreSQL Database
 [[services]]
 name = "postgres"
 image = "postgres:16-alpine"
 
-[services.postgres.variables]
-POSTGRES_DB = "tradingbot"
-POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
+  [services.postgres.variables]
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
-[[services.postgres.volumes]]
-mount = "/var/lib/postgresql/data"
+  [[services.postgres.volumes]]
+  mount = "/var/lib/postgresql/data"
+  name = "postgres-data"
 
-# PostgreSQL Healthcheck
-[services.postgres.healthcheck]
-type = "tcp"
-port = 5432
-interval = 10
-timeout = 5
-retries = 5
-
-# ===========================================
 # Trading Bot Service
-# ===========================================
 [[services]]
 name = "trading-bot"
-image = "aureumvictoria/trading-bot-secure:latest"
+image = "aureumvictoria/unCodedBotDocker:latest"
 
-# WICHTIG: Diese Variablen müssen manuell im Railway Dashboard gesetzt werden!
-[services.trading-bot.variables]
-# Database Connection - Explizite Werte
-POSTGRES_HOST = "postgres.railway.internal"
-POSTGRES_PORT = "5432"
-POSTGRES_DB = "tradingbot"
-POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
-DOCKER_ENV = "true"
+  [services.trading-bot.variables]
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  DOCKER_ENV = "true"
+  # Binance API placeholders
+  API_KEY = ""
+  API_SECRET = ""
 
-# Alternative: Nutze DATABASE_URL statt einzelner Variablen
-# DATABASE_URL = "postgresql://postgres:${{RAILWAY_PASSWORD}}@postgres.railway.internal:5432/tradingbot"
+  [services.trading-bot.deploy]
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 10
 
-# API Keys - MÜSSEN MANUELL GESETZT WERDEN
-# API_KEY = "your-binance-api-key"
-# API_SECRET = "your-binance-api-secret"
-
-# Deployment Configuration
-[services.trading-bot.deploy]
-# Warte 15 Sekunden damit Postgres sicher bereit ist
-startCommand = "sleep 15 && node index.js"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
-
-# Resource Limits
-[services.trading-bot.resources]
-cpu = "0.5"
-memory = "512Mi"
-
-# ===========================================
 # Telegram Bot Service  
-# ===========================================
 [[services]]
 name = "telegram-bot"
-image = "aureumvictoria/telegram-bot-secure:latest"
+image = "aureumvictoria/unCodedBotDocker:latest"
 
-[services.telegram-bot.variables]
-# Database Connection - Explizite Werte
-POSTGRES_HOST = "postgres.railway.internal"
-POSTGRES_PORT = "5432"
-POSTGRES_DB = "tradingbot"
-POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
+  [services.telegram-bot.variables]
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Telegram placeholders
+  TELEGRAM_BOT_TOKEN = ""
+  TELEGRAM_GROUP_ID = ""
+  TELEGRAM_OWNER_ID = ""
 
-# Alternative: Nutze DATABASE_URL
-# DATABASE_URL = "postgresql://postgres:${{RAILWAY_PASSWORD}}@postgres.railway.internal:5432/tradingbot"
-
-# Telegram Config - MÜSSEN MANUELL GESETZT WERDEN
-# TELEGRAM_BOT_TOKEN = "your-telegram-bot-token"
-# TELEGRAM_GROUP_ID = "your-telegram-group-id"  
-# TELEGRAM_OWNER_ID = "your-telegram-user-id"
-
-# Deployment Configuration
-[services.telegram-bot.deploy]
-# Warte 20 Sekunden (länger als trading-bot)
-startCommand = "sleep 20 && node index.js"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
-
-# Resource Limits
-[services.telegram-bot.resources]
-cpu = "0.25"
-memory = "256Mi"
-
-# ===========================================
-# WICHTIGE HINWEISE:
-# ===========================================
-# 1. Railway lädt diese Variablen NUR bei Template-Deployments
-# 2. Bei manuellen Deployments MÜSSEN alle Variablen im UI gesetzt werden
-# 3. Gehe zu jedem Service → Variables Tab → Add Variable
-# 
-# Trading Bot benötigt:
-# - POSTGRES_HOST = postgres.railway.internal
-# - POSTGRES_PORT = 5432
-# - POSTGRES_DB = tradingbot
-# - POSTGRES_USER = postgres
-# - POSTGRES_PASSWORD = [generiertes Passwort]
-# - DOCKER_ENV = true
-# - API_KEY = [Binance API Key]
-# - API_SECRET = [Binance API Secret]
-#
-# Telegram Bot benötigt:
-# - Alle POSTGRES_* Variablen (gleiche wie oben)
-# - TELEGRAM_BOT_TOKEN = [von @BotFather]
-# - TELEGRAM_GROUP_ID = [deine Gruppe]
-# - TELEGRAM_OWNER_ID = [deine User ID]
+  [services.telegram-bot.deploy]
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 5
