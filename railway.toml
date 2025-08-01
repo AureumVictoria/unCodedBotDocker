@@ -1,5 +1,5 @@
 # railway.toml
-# Richtige Konfiguration für den automatisierten Deploy von GitHub.
+# Korrigierte Konfiguration für den automatisierten Deploy von GitHub.
 # Railway liest diese Datei und baut die Dockerfiles direkt aus diesem Repository.
 # Docker Hub wird hierfür NICHT verwendet.
 
@@ -32,6 +32,8 @@ dockerfilePath = "./telegram-bot/Dockerfile"
 # Auch hier wird der Startbefehl (CMD) aus dem Dockerfile verwendet.
 
 # --- Definition des Datenbank-Dienstes ---
-# Dies ist der empfohlene und korrekte Weg, eine Datenbank auf Railway zu erstellen.
-# Railway stellt einen optimierten, verwalteten PostgreSQL-Dienst bereit.
-[plugins.postgres]
+# Diese explizite Syntax stellt sicher, dass der Datenbank-Dienst den Namen "postgres" erhält.
+# Dadurch funktionieren die Verweise in den Umgebungsvariablen (z.B. ${{postgres.PGHOST}}) korrekt.
+[[services]]
+name = "postgres"
+plugin = "postgresql"
