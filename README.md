@@ -1,36 +1,34 @@
-# UnCoded Trading Bot - Easy Deploy
+## 🚀 Quick Deploy on Railway
 
-Deploy the UnCoded Trading Bot with one click on Railway!
+### 1. Deploy with One Click
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/uncoded-bot)
 
-## 🚂 Deploy on Railway (Recommended - $5-10/month)
+### 2. After Deploy (Important!)
+The bot needs your API keys to work:
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/XXXXXX)
-
-### After Deployment:
-
-1. **Wait for services to start** (3-5 minutes)
-2. **Add your API Keys** in Railway Dashboard:
-   - Click on `trading-bot` service
+1. **Wait 2-3 minutes** for all services to start
+2. **Add Binance API Keys:**
+   - Click on `trading-bot` service in Railway
    - Go to "Variables" tab
-   - Add:
-     - `API_KEY` = Your Binance API Key
-     - `API_SECRET` = Your Binance API Secret
-3. **Configure Telegram Bot**:
+   - Fill in `API_KEY` and `API_SECRET`
+   - Click "Deploy" to apply changes
+
+3. **Add Telegram Bot Token:**
    - Click on `telegram-bot` service
-   - Add:
-     - `TELEGRAM_BOT_TOKEN` = From @BotFather
-     - `TELEGRAM_GROUP_ID` = Your group ID
-     - `TELEGRAM_OWNER_ID` = Your user ID
+   - Go to "Variables" tab
+   - Fill in:
+     - `TELEGRAM_BOT_TOKEN` (from @BotFather)
+     - `TELEGRAM_GROUP_ID` (your group ID)
+     - `TELEGRAM_OWNER_ID` (your user ID)
+   - Click "Deploy" to apply changes
 
-## 💰 Costs
-- Database: ~$2-3/month
-- Trading Bot: ~$2-3/month
-- Telegram Bot: ~$2-3/month
-- **Total: ~$5-10/month** (usage-based)
+### 3. Verify Everything Works
+- Check PostgreSQL logs: Should show "database system is ready"
+- Check trading-bot logs: Should show "Connected to Binance"
+- Check telegram-bot logs: Should show "Bot started"
 
-## 🎁 New User Bonus
-Railway gives $5 free credits every month!
-
-## Alternative: Deploy on Render ($29+/month)
-If you prefer Render despite higher costs:
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aureumvictoria/uncoded-bot-deploy)
+### 💡 Pro Tips:
+- Railway gives you $5 free credits every month
+- Your bot will cost ~$5-10/month depending on usage
+- You can pause services anytime to save costs
+- Use Railway's mobile app to monitor on the go
