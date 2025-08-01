@@ -30,7 +30,7 @@
     {
       "name": "trading-bot",
       "source": {
-        "image": "aureumvictoria/unCodedBotDocker:latest"
+        "image": "aureumvictoria/trading-bot-secure:latest"
       },
       "variables": {
         "POSTGRES_HOST": {

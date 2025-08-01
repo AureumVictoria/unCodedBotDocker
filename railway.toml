@@ -45,7 +45,7 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 # Telegram Bot Service  
 [[services]]
 name = "telegram-bot"
-image = "aureumvictoria/telegram-bot-secure:latest"
+image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
   # Interne Railway Verbindung zu Postgres
