@@ -1,52 +1,60 @@
-# Finales, sicheres Dockerfile für ./trading-bot/
-# Version: 2025-08-01 (Revised)
+# UnCoded Trading Bot - Railway Konfiguration
+# Definiert alle Services für das Deployment.
 
-# STAGE 1: Builder - Baut die Anwendung und das Executable
-FROM node:18-bullseye-slim AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
+[build]
+builder = "NIXPACKS"
 
-# Verschleiere den Code mit einer stabilen Konfiguration
-RUN npx javascript-obfuscator . \
-    --output ./build/obfuscated \
-    --exclude '**/node_modules/**' \
-    --compact true \
-    --control-flow-flattening true \
-    --control-flow-flattening-threshold 1 \
-    --dead-code-injection true \
-    --dead-code-injection-threshold 1 \
-    --rename-globals true \
-    --string-array true \
-    --string-array-encoding 'base64' \
-    --string-array-rotate true \
-    --split-strings true \
-    --transform-object-keys true \
-    --unicode-escape-sequence true \
-    --identifier-names-generator 'mangled' \
-    --target 'node'
+# Service 1: PostgreSQL Datenbank
+[[services]]
+name = "postgres"
+image = "postgres:16-alpine"
+restartPolicy = "on-failure"
 
-# Packe die Anwendung mit pkg. Liest Konfiguration aus package.json ("bin").
-RUN npx pkg . --targets node18-linux-x64 --output /app/trading-bot-executable
+  [services.postgres.variables]
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
+  [[services.postgres.volumes]]
+  mount = "/var/lib/postgresql/data"
+  name = "postgres-data"
 
-# STAGE 2: Das finale, schlanke Image für den Betrieb
-FROM debian:bookworm-slim
-WORKDIR /app
+# Service 2: Der Trading-Bot
+[[services]]
+name = "trading-bot"
+image = "./" # Sagt Railway, das lokale Dockerfile zu bauen
+restartPolicy = "on-failure"
+restartRetries = 10
 
-# Erstelle einen dedizierten, unprivilegierten Benutzer für mehr Sicherheit
-RUN useradd --system --uid 1001 --create-home appuser
+  [services.trading-bot.variables]
+  # Interne Railway-Verbindung zur Postgres-Datenbank
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DOCKER_ENV = "true"
+  
+  # Setze hier deine Binance API Keys
+  API_KEY = "" 
+  API_SECRET = ""
 
-# Kopiere das Executable vom Builder-Stage
-COPY --from=builder /app/trading-bot-executable /app/trading-bot
+# Service 3: Der Telegram-Bot
+[[services]]
+name = "telegram-bot"
+image = "./" # Geht davon aus, dass der gleiche Docker-Build verwendet wird
+startCommand = "node tgbot.js" # Passe dies an, falls der Startbefehl anders lautet
+restartPolicy = "on-failure"
 
-# KORREKTUR: Erstelle das benötigte Log-Verzeichnis und setze die korrekten Berechtigungen
-RUN mkdir -p /app/logs && chown -R appuser:appuser /app
-
-# Wechsle zum unprivilegierten Benutzer
-USER appuser
-
-# KORREKTUR: Setze den korrekten Startbefehl. 'exec' ersetzt den Shell-Prozess durch den Bot,
-# was für korrektes Signal-Handling sorgt.
-CMD exec ./trading-bot
+  [services.telegram-bot.variables]
+  # Verbindung zur gleichen Datenbank
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  
+  # Setze hier deine Telegram Bot Secrets
+  TELEGRAM_BOT_TOKEN = ""
+  TELEGRAM_GROUP_ID = ""
+  TELEGRAM_OWNER_ID = ""
