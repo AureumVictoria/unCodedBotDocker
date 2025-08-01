@@ -1,6 +1,4 @@
 # UnCoded Trading Bot - Railway Konfiguration
-# Definiert alle Services für das Deployment.
-
 [build]
 builder = "NIXPACKS"
 
@@ -9,12 +7,10 @@ builder = "NIXPACKS"
 name = "postgres"
 image = "postgres:16-alpine"
 restartPolicy = "on-failure"
-
   [services.postgres.variables]
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
-
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
   name = "postgres-data"
@@ -22,39 +18,25 @@ restartPolicy = "on-failure"
 # Service 2: Der Trading-Bot
 [[services]]
 name = "trading-bot"
-image = "./" # Sagt Railway, das lokale Dockerfile zu bauen
+image = "./"
 restartPolicy = "on-failure"
-restartRetries = 10
-
   [services.trading-bot.variables]
-  # Interne Railway-Verbindung zur Postgres-Datenbank
   POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
   DOCKER_ENV = "true"
-  
-  # Setze hier deine Binance API Keys
-  API_KEY = "" 
-  API_SECRET = ""
 
 # Service 3: Der Telegram-Bot
 [[services]]
 name = "telegram-bot"
-image = "./" # Geht davon aus, dass der gleiche Docker-Build verwendet wird
-startCommand = "node tgbot.js" # Passe dies an, falls der Startbefehl anders lautet
+image = "./"
+startCommand = "node tgbot.js"
 restartPolicy = "on-failure"
-
   [services.telegram-bot.variables]
-  # Verbindung zur gleichen Datenbank
   POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
   POSTGRES_PORT = "5432"
   POSTGRES_DB = "tradingbot"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  
-  # Setze hier deine Telegram Bot Secrets
-  TELEGRAM_BOT_TOKEN = ""
-  TELEGRAM_GROUP_ID = ""
-  TELEGRAM_OWNER_ID = ""
