@@ -1,17 +1,14 @@
 # railway.toml
-# Finale, robusteste Konfiguration für den automatisierten Deploy von GitHub.
-# Diese Version enthält nun auch die Definition der Umgebungsvariablen.
+# Finale, korrigierte Konfiguration.
+# Diese Datei erstellt die Dienste UND stellt die Verbindung zur Datenbank automatisch her.
 
 # Globale Build-Einstellungen
 [build]
-# Wir weisen Railway an, die Dockerfiles in den jeweiligen Ordnern zu verwenden.
 builder = "DOCKER"
 
 # Globale Deployment-Einstellungen
 [deploy]
-# Startet Dienste bei einem Fehler automatisch neu.
 restartPolicy = "ON_FAILURE"
-# Versucht den Neustart bis zu 10 Mal.
 restartPolicyMaxRetries = 10
 
 # --- Definition des Trading-Bot-Dienstes ---
@@ -19,44 +16,41 @@ restartPolicyMaxRetries = 10
 name = "trading-bot"
 dockerfilePath = "./trading-bot/Dockerfile"
 
-  # Umgebungsvariablen für den Trading-Bot
-  [services.variables]
-  # Diese Variablen verbinden den Bot mit dem PostgreSQL-Dienst.
-  # Der Name 'PostgreSQL' muss exakt dem Namen des Datenbank-Dienstes in Railway entsprechen.
-  POSTGRES_HOST = "${{PostgreSQL.PGHOST}}"
-  POSTGRES_USER = "${{PostgreSQL.PGUSER}}"
-  POSTGRES_PASSWORD = "${{PostgreSQL.PGPASSWORD}}"
-  POSTGRES_DB = "${{PostgreSQL.PGDATABASE}}"
-  POSTGRES_PORT = "${{PostgreSQL.PGPORT}}"
-  DOCKER_ENV = "true"
-
-  # WICHTIG: Fügen Sie Ihre echten API-Keys NICHT hier ein.
-  # Setzen Sie diese in der Railway-Weboberfläche.
-  API_KEY = ""
-  API_SECRET = ""
-
 # --- Definition des Telegram-Bot-Dienstes ---
 [[services]]
 name = "telegram-bot"
 dockerfilePath = "./telegram-bot/Dockerfile"
 
-  # Umgebungsvariablen für den Telegram-Bot
-  [services.variables]
-  # Verbindung zur selben PostgreSQL-Datenbank
-  POSTGRES_HOST = "${{PostgreSQL.PGHOST}}"
-  POSTGRES_USER = "${{PostgreSQL.PGUSER}}"
-  POSTGRES_PASSWORD = "${{PostgreSQL.PGPASSWORD}}"
-  POSTGRES_DB = "${{PostgreSQL.PGDATABASE}}"
-  POSTGRES_PORT = "${{PostgreSQL.PGPORT}}"
-
-  # WICHTIG: Fügen Sie Ihre echten Telegram-Secrets NICHT hier ein.
-  # Setzen Sie diese in der Railway-Weboberfläche.
-  TELEGRAM_BOT_TOKEN = ""
-  TELEGRAM_GROUP_ID = ""
-  TELEGRAM_OWNER_ID = ""
-
 # --- Definition des Datenbank-Dienstes ---
-# Dies ist die offizielle Standard-Syntax. Sie erstellt einen von Railway
-# verwalteten PostgreSQL-Dienst. In der Railway-Oberfläche wird dieser
-# Dienst standardmäßig "PostgreSQL" heißen.
+# Erstellt einen von Railway verwalteten PostgreSQL-Dienst.
+# Basierend auf Ihrem Screenshot wird dieser Dienst "trading-postgres" heißen.
 [plugins.postgres]
+name = "trading-postgres"
+
+
+# --- Variablen für den Trading-Bot ---
+# Diese Sektion verknüpft den "trading-bot" Dienst mit den Datenbank-Variablen.
+[services.trading-bot.variables]
+POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
+POSTGRES_USER = "${{trading-postgres.PGUSER}}"
+POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
+POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
+POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
+DOCKER_ENV = "true"
+# WICHTIG: Setzen Sie Ihre echten API-Keys in der Railway-Weboberfläche!
+API_KEY = ""
+API_SECRET = ""
+
+
+# --- Variablen für den Telegram-Bot ---
+# Diese Sektion verknüpft den "telegram-bot" Dienst mit den Datenbank-Variablen.
+[services.telegram-bot.variables]
+POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
+POSTGRES_USER = "${{trading-postgres.PGUSER}}"
+POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
+POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
+POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
+# WICHTIG: Setzen Sie Ihre echten Telegram-Secrets in der Railway-Weboberfläche!
+TELEGRAM_BOT_TOKEN = ""
+TELEGRAM_GROUP_ID = ""
+TELEGRAM_OWNER_ID = ""
