@@ -1,0 +1,37 @@
+[build]
+builder = "nixpacks"
+
+[[services]]
+name = "postgres"
+image = "postgres:16-alpine"
+
+[services.postgres.variables]
+POSTGRES_DB = "tradingbot"
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
+
+[[services.postgres.volumes]]
+mount = "/var/lib/postgresql/data"
+
+[[services]]
+name = "trading-bot"
+image = "aureumvictoria/trading-bot-secure:latest"
+
+[services.trading-bot.variables]
+POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+POSTGRES_PORT = "5432"
+POSTGRES_DB = "tradingbot"
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"
+DOCKER_ENV = "true"
+
+[[services]]
+name = "telegram-bot"
+image = "aureumvictoria/telegram-bot-secure:latest"
+
+[services.telegram-bot.variables]
+POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+POSTGRES_PORT = "5432"
+POSTGRES_DB = "tradingbot"
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"

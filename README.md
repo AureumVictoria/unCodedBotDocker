@@ -1,28 +1,36 @@
 # UnCoded Trading Bot - Easy Deploy
 
-Deploy the UnCoded Trading Bot with one click!
+Deploy the UnCoded Trading Bot with one click on Railway!
 
-## 🚀 Deploy to Render
+## 🚂 Deploy on Railway (Recommended - $5-10/month)
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aureumvictoria/unCodedBotDocker)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/XXXXXX)
 
-## 📋 After Deployment
+### After Deployment:
 
-You need to set these environment variables in Render Dashboard:
+1. **Wait for services to start** (3-5 minutes)
+2. **Add your API Keys** in Railway Dashboard:
+   - Click on `trading-bot` service
+   - Go to "Variables" tab
+   - Add:
+     - `API_KEY` = Your Binance API Key
+     - `API_SECRET` = Your Binance API Secret
+3. **Configure Telegram Bot**:
+   - Click on `telegram-bot` service
+   - Add:
+     - `TELEGRAM_BOT_TOKEN` = From @BotFather
+     - `TELEGRAM_GROUP_ID` = Your group ID
+     - `TELEGRAM_OWNER_ID` = Your user ID
 
-### For Trading Bot:
-- `API_KEY` - Your Binance API Key
-- `API_SECRET` - Your Binance API Secret
+## 💰 Costs
+- Database: ~$2-3/month
+- Trading Bot: ~$2-3/month
+- Telegram Bot: ~$2-3/month
+- **Total: ~$5-10/month** (usage-based)
 
-### For Telegram Bot:
-- `TELEGRAM_BOT_TOKEN` - Get from @BotFather
-- `TELEGRAM_GROUP_ID` - Your Telegram group/chat ID
-- `TELEGRAM_OWNER_ID` - Your Telegram user ID
+## 🎁 New User Bonus
+Railway gives $5 free credits every month!
 
-## 🔐 Security
-
-The bot binaries are encrypted and obfuscated. No source code is included.
-
-## 📖 Support
-
-For support, visit [uncoded.vip](https://uncoded.vip)
+## Alternative: Deploy on Render ($29+/month)
+If you prefer Render despite higher costs:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aureumvictoria/uncoded-bot-deploy)
