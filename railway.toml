@@ -1,6 +1,7 @@
 [build]
 builder = "nixpacks"
 
+# PostgreSQL Database Service
 [[services]]
 name = "postgres"
 image = "postgres:16-alpine"
@@ -13,25 +14,54 @@ POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
 [[services.postgres.volumes]]
 mount = "/var/lib/postgresql/data"
 
+# Trading Bot Service
 [[services]]
 name = "trading-bot"
 image = "aureumvictoria/trading-bot-secure:latest"
 
 [services.trading-bot.variables]
-POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+# Database Connection - Using explicit internal domain
+POSTGRES_HOST = "postgres.railway.internal"
 POSTGRES_PORT = "5432"
 POSTGRES_DB = "tradingbot"
 POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"
+POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
 DOCKER_ENV = "true"
 
+# API Keys - Diese müssen manuell in Railway gesetzt werden
+# API_KEY = "your-binance-api-key"
+# API_SECRET = "your-binance-api-secret"
+
+# Healthcheck für bessere Stabilität
+[services.trading-bot.healthcheck]
+type = "tcp"
+port = 3000
+interval = 30
+timeout = 5
+retries = 3
+
+# Telegram Bot Service
 [[services]]
 name = "telegram-bot"
 image = "aureumvictoria/telegram-bot-secure:latest"
 
 [services.telegram-bot.variables]
-POSTGRES_HOST = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+# Database Connection - Using explicit internal domain
+POSTGRES_HOST = "postgres.railway.internal"
 POSTGRES_PORT = "5432"
 POSTGRES_DB = "tradingbot"
 POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "${{postgres.POSTGRES_PASSWORD}}"
+POSTGRES_PASSWORD = "${{RAILWAY_PASSWORD}}"
+
+# Telegram Config - Diese müssen manuell in Railway gesetzt werden
+# TELEGRAM_BOT_TOKEN = "your-telegram-bot-token"
+# TELEGRAM_GROUP_ID = "your-telegram-group-id"
+# TELEGRAM_OWNER_ID = "your-telegram-user-id"
+
+# Optional: Sleep delay to ensure postgres is ready
+[services.telegram-bot.deploy]
+startCommand = "sleep 10 && npm start"
+
+# Optional: Sleep delay to ensure postgres is ready
+[services.trading-bot.deploy]
+startCommand = "sleep 10 && npm start"
