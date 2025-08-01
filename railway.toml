@@ -2,7 +2,7 @@
 # This file automatically deploys all services
 
 [build]
-!
+
 builder = "NIXPACKS"
 
 # Template variables: erscheinen im Deploy-Dialog bei Template-Nutzung
