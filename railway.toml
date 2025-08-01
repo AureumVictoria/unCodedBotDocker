@@ -1,59 +1,63 @@
 # UnCoded Trading Bot - Railway Configuration
-# Dieses File deployt alle Services automatisch
+# This file automatically deploys all services
 
 [build]
-  builder = "nixpacks"
+builder = "NIXPACKS"
 
 # PostgreSQL Database
 [[services]]
-name  = "postgres"
+name = "postgres"
 image = "postgres:16-alpine"
 
   [services.postgres.variables]
-  POSTGRES_DB       = "tradingbot"
-  POSTGRES_USER     = "postgres"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
   [[services.postgres.volumes]]
   mount = "/var/lib/postgresql/data"
-  name  = "postgres-data"
+  name = "postgres-data"
 
 # Trading Bot Service
 [[services]]
-name  = "trading-bot"
+name = "trading-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
-  # Nutze den DOCKER_ENV-Branch für individuelle PG-Variablen
-  DOCKER_ENV        = "true"
-  # Korrekte Railway-Interpolation für deine Postgres-Instanz
-  POSTGRES_HOST     = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
-  POSTGRES_PORT     = "${{postgres.RAILWAY_PORT}}"
-  POSTGRES_DB       = "${{postgres.RAILWAY_DATABASE}}"
-  POSTGRES_USER     = "${{postgres.RAILWAY_USER}}"
-  POSTGRES_PASSWORD = "${{postgres.RAILWAY_PASSWORD}}"
-  # Fallback für Libraries, die einen Connection String erwarten
-  DATABASE_URL      = "${{postgres.RAILWAY_URL}}"
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  DOCKER_ENV = "true"
   # Binance API placeholders
-  API_KEY           = ""
-  API_SECRET        = ""
+  API_KEY = ""
+  API_SECRET = ""
 
   [services.trading-bot.deploy]
-  restartPolicyType       = "ON_FAILURE"
+  restartPolicyType = "ON_FAILURE"
   restartPolicyMaxRetries = 10
 
-# Telegram Bot Service
+# Telegram Bot Service  
 [[services]]
-name  = "telegram-bot"
+name = "telegram-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
-  # Nutzt nur DATABASE_URL für Verbindung
-  DATABASE_URL       = "${postgres.RAILWAY_URL}"
+  # Internal Railway connection to Postgres
+  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT = "5432"
+  POSTGRES_DB = "tradingbot"
+  POSTGRES_USER = "postgres"
+  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  # Telegram placeholders
   TELEGRAM_BOT_TOKEN = ""
-  TELEGRAM_GROUP_ID  = ""
-  TELEGRAM_OWNER_ID  = ""
+  TELEGRAM_GROUP_ID = ""
+  TELEGRAM_OWNER_ID = ""
 
   [services.telegram-bot.deploy]
-  restartPolicyType       = "ON_FAILURE"
+  restartPolicyType = "ON_FAILURE"
   restartPolicyMaxRetries = 5
