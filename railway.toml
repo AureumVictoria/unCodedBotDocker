@@ -10,8 +10,8 @@ name = "postgres"
 image = "postgres:16-alpine"
 
   [services.postgres.variables]
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
+  POSTGRES_DB       = "tradingbot"
+  POSTGRES_USER     = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
 
   [[services.postgres.volumes]]
@@ -24,19 +24,14 @@ name = "trading-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
-  # Internal Railway connection to Postgres
-  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT = "5432"
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
+  # Verwende nur DATABASE_URL für die Verbindung
   DATABASE_URL = "${postgres.RAILWAY_URL}"
   # Binance API placeholders
-  API_KEY = ""
-  API_SECRET = ""
+  API_KEY      = ""
+  API_SECRET   = ""
 
   [services.trading-bot.deploy]
-  restartPolicyType = "ON_FAILURE"
+  restartPolicyType      = "ON_FAILURE"
   restartPolicyMaxRetries = 10
 
 # Telegram Bot Service  
@@ -46,17 +41,17 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
   # Internal Railway connection to Postgres
-  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT = "5432"
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
+  POSTGRES_HOST     = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
+  POSTGRES_PORT     = "5432"
+  POSTGRES_DB       = "tradingbot"
+  POSTGRES_USER     = "postgres"
   POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DATABASE_URL = "${postgres.RAILWAY_URL}"
+  DATABASE_URL      = "${postgres.RAILWAY_URL}"
   # Telegram placeholders
   TELEGRAM_BOT_TOKEN = ""
-  TELEGRAM_GROUP_ID = ""
-  TELEGRAM_OWNER_ID = ""
+  TELEGRAM_GROUP_ID  = ""
+  TELEGRAM_OWNER_ID  = ""
 
   [services.telegram-bot.deploy]
-  restartPolicyType = "ON_FAILURE"
+  restartPolicyType      = "ON_FAILURE"
   restartPolicyMaxRetries = 5
