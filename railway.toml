@@ -24,9 +24,9 @@ name  = "trading-bot"
 image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
-  # Korrekte Railway-Interpolation für deine Postgres-Instanz
-  # Verweis auf den Service-Namen "postgres"
+  # Nutze den DOCKER_ENV-Branch für individuelle PG-Variablen
   DOCKER_ENV        = "true"
+  # Korrekte Railway-Interpolation für deine Postgres-Instanz
   POSTGRES_HOST     = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
   POSTGRES_PORT     = "${{postgres.RAILWAY_PORT}}"
   POSTGRES_DB       = "${{postgres.RAILWAY_DATABASE}}"
