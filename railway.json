@@ -30,7 +30,7 @@
     {
       "name": "trading-bot",
       "source": {
-        "image": "aureumvictoria/trading-bot-secure:latest"
+        "image": "aureumvictoria/unCodedBotDocker:latest"
       },
       "variables": {
         "POSTGRES_HOST": {
@@ -50,7 +50,7 @@
     {
       "name": "telegram-bot",
       "source": {
-        "image": "aureumvictoria/telegram-bot-secure:latest"
+        "image": "aureumvictoria/unCodedBotDocker:latest"
       },
       "variables": {
         "POSTGRES_HOST": {

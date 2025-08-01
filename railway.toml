@@ -22,7 +22,7 @@ image = "postgres:16-alpine"
 # Trading Bot Service
 [[services]]
 name = "trading-bot"
-image = "aureumvictoria/trading-bot-secure:latest"
+image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
   # Interne Railway Verbindung zu Postgres
