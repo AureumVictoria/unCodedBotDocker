@@ -1,26 +1,37 @@
-# railway.toml - Konfiguration für den 1-Klick-Deploy
+# railway.toml
+# Richtige Konfiguration für den automatisierten Deploy von GitHub.
+# Railway liest diese Datei und baut die Dockerfiles direkt aus diesem Repository.
+# Docker Hub wird hierfür NICHT verwendet.
 
 # Globale Build-Einstellungen
 [build]
-builder = "DOCKER" # Wir sagen Railway, dass es Dockerfiles verwenden soll
+# Wir weisen Railway an, die Dockerfiles in den jeweiligen Ordnern zu verwenden.
+builder = "DOCKER"
 
 # Globale Deployment-Einstellungen
 [deploy]
-restartPolicy = "ON_FAILURE" # Startet Dienste bei einem Fehler neu
-restartPolicyMaxRetries = 10  # Bis zu 10 Neustart-Versuche
+# Startet Dienste bei einem Fehler automatisch neu.
+restartPolicy = "ON_FAILURE"
+# Versucht den Neustart bis zu 10 Mal.
+restartPolicyMaxRetries = 10
 
 # --- Definition des Trading-Bot-Dienstes ---
+# Railway erstellt einen Dienst namens "trading-bot".
+# Das Image wird aus dem Dockerfile in "./trading-bot/" gebaut.
 [[services]]
-name = "trading-bot" # Name des Dienstes in Railway
-dockerfilePath = "./trading-bot/Dockerfile" # Pfad zum Dockerfile
-# Der Startbefehl wird direkt aus dem CMD im Dockerfile übernommen
+name = "trading-bot"
+dockerfilePath = "./trading-bot/Dockerfile"
+# Der Startbefehl (CMD) wird direkt aus deinem Dockerfile übernommen.
 
 # --- Definition des Telegram-Bot-Dienstes ---
+# Railway erstellt einen zweiten Dienst namens "telegram-bot".
+# Das Image wird aus dem Dockerfile in "./telegram-bot/" gebaut.
 [[services]]
 name = "telegram-bot"
-dockerfilePath = "./telegram-bot/Dockerfile" # Stelle sicher, dass dieser Pfad und die Datei existieren
-# Der Startbefehl wird direkt aus dem CMD im Dockerfile übernommen
+dockerfilePath = "./telegram-bot/Dockerfile"
+# Auch hier wird der Startbefehl (CMD) aus dem Dockerfile verwendet.
 
 # --- Definition des Datenbank-Dienstes ---
+# Dies ist der empfohlene und korrekte Weg, eine Datenbank auf Railway zu erstellen.
+# Railway stellt einen optimierten, verwalteten PostgreSQL-Dienst bereit.
 [plugins.postgres]
-# Dies erstellt automatisch einen von Railway verwalteten PostgreSQL-Dienst
