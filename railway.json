@@ -1,69 +1,58 @@
 {
-  "$schema": "https://railway.app/railway.schema.json",
+  "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile"
-  },
-  "deploy": {
-    "numReplicas": 1,
-    "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
+    "builder": "NIXPACKS"
   },
   "services": [
     {
       "name": "postgres",
       "image": "postgres:16-alpine",
+      "variables": {
+        "POSTGRES_DB": "tradingbot",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "${RAILWAY_PASSWORD}"
+      },
       "volumes": [
         {
           "mount": "/var/lib/postgresql/data",
           "name": "postgres-data"
         }
-      ],
-      "variables": {
-        "POSTGRES_DB": "tradingbot",
-        "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": {
-          "generator": "password"
-        }
-      }
+      ]
     },
     {
       "name": "trading-bot",
-      "source": {
-        "image": "aureumvictoria/trading-bot-secure:latest"
-      },
+      "image": "aureumvictoria/unCodedBotDocker:latest",
       "variables": {
-        "POSTGRES_HOST": {
-          "fromService": "postgres",
-          "type": "RAILWAY_PRIVATE_DOMAIN"
-        },
+        "POSTGRES_HOST": "${postgres.RAILWAY_PRIVATE_DOMAIN}",
         "POSTGRES_PORT": "5432",
         "POSTGRES_DB": "tradingbot",
         "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": {
-          "fromService": "postgres",
-          "envVarKey": "POSTGRES_PASSWORD"
-        },
-        "DOCKER_ENV": "true"
+        "POSTGRES_PASSWORD": "${postgres.POSTGRES_PASSWORD}",
+        "DOCKER_ENV": "true",
+        "API_KEY": "",
+        "API_SECRET": ""
+      },
+      "deploy": {
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
       }
     },
     {
       "name": "telegram-bot",
-      "source": {
-        "image": "aureumvictoria/unCodedBotDocker:latest"
-      },
+      "image": "aureumvictoria/unCodedBotDocker:latest",
       "variables": {
-        "POSTGRES_HOST": {
-          "fromService": "postgres",
-          "type": "RAILWAY_PRIVATE_DOMAIN"
-        },
+        "POSTGRES_HOST": "${postgres.RAILWAY_PRIVATE_DOMAIN}",
         "POSTGRES_PORT": "5432",
         "POSTGRES_DB": "tradingbot",
         "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": {
-          "fromService": "postgres",
-          "envVarKey": "POSTGRES_PASSWORD"
-        }
+        "POSTGRES_PASSWORD": "${postgres.POSTGRES_PASSWORD}",
+        "TELEGRAM_BOT_TOKEN": "",
+        "TELEGRAM_GROUP_ID": "",
+        "TELEGRAM_OWNER_ID": ""
+      },
+      "deploy": {
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 5
       }
     }
   ]
