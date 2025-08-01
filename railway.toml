@@ -25,21 +25,21 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.trading-bot.variables]
   # Nutze den DOCKER_ENV-Branch für individuelle PG-Variablen
-  DOCKER_ENV        = "true"
+  DOCKER_ENV  = "true"
   # Korrekte Railway-Interpolation für deine Postgres-Instanz
-  POSTGRES_HOST     = "${{trading-postgres.RAILWAY_PRIVATE_DOMAIN}}"
-  POSTGRES_PORT     = "${{trading-postgres.RAILWAY_PORT}}"
-  POSTGRES_DB       = "${{trading-postgres.RAILWAY_DATABASE}}"
-  POSTGRES_USER     = "${{trading-postgres.RAILWAY_USER}}"
-  POSTGRES_PASSWORD = "${{trading-postgres.RAILWAY_PASSWORD}}"
+  POSTGRES_HOST     = "${{postgres.RAILWAY_PRIVATE_DOMAIN}}"
+  POSTGRES_PORT     = "${{postgres.RAILWAY_PORT}}"
+  POSTGRES_DB       = "${{postgres.RAILWAY_DATABASE}}"
+  POSTGRES_USER     = "${{postgres.RAILWAY_USER}}"
+  POSTGRES_PASSWORD = "${{postgres.RAILWAY_PASSWORD}}"
   # Fall­back für Libraries, die einen Connection String erwarten
-  DATABASE_URL      = "${{trading-postgres.RAILWAY_URL}}"
+  DATABASE_URL      = "${{postgres.RAILWAY_URL}}"
   # Binance API placeholders
   API_KEY           = ""
   API_SECRET        = ""
 
   [services.trading-bot.deploy]
-  restartPolicyType      = "ON_FAILURE"
+  restartPolicyType       = "ON_FAILURE"
   restartPolicyMaxRetries = 10
 
 # Telegram Bot Service
@@ -49,11 +49,11 @@ image = "aureumvictoria/unCodedBotDocker:latest"
 
   [services.telegram-bot.variables]
   # Nutzt nur DATABASE_URL für Verbindung
-  DATABASE_URL      = "${postgres.RAILWAY_URL}"
+  DATABASE_URL       = "${postgres.RAILWAY_URL}"
   TELEGRAM_BOT_TOKEN = ""
   TELEGRAM_GROUP_ID  = ""
   TELEGRAM_OWNER_ID  = ""
 
   [services.telegram-bot.deploy]
-  restartPolicyType      = "ON_FAILURE"
+  restartPolicyType       = "ON_FAILURE"
   restartPolicyMaxRetries = 5
