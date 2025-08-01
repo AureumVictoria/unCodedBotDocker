@@ -1,7 +1,7 @@
 databases:
   - name: trading-postgres
     databaseName: tradingbot
-    plan: starter
+    plan: basic-1gb
     region: oregon
     ipAllowList: []
 
