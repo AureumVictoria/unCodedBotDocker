@@ -1,63 +1,26 @@
-# UnCoded Trading Bot - Railway Configuration
-# This file automatically deploys all services
+# railway.toml - Konfiguration für den 1-Klick-Deploy
 
+# Globale Build-Einstellungen
 [build]
-builder = "NIXPACKS"
+builder = "DOCKER" # Wir sagen Railway, dass es Dockerfiles verwenden soll
 
-# PostgreSQL Database
+# Globale Deployment-Einstellungen
+[deploy]
+restartPolicy = "ON_FAILURE" # Startet Dienste bei einem Fehler neu
+restartPolicyMaxRetries = 10  # Bis zu 10 Neustart-Versuche
+
+# --- Definition des Trading-Bot-Dienstes ---
 [[services]]
-name = "postgres"
-image = "postgres:16-alpine"
+name = "trading-bot" # Name des Dienstes in Railway
+dockerfilePath = "./trading-bot/Dockerfile" # Pfad zum Dockerfile
+# Der Startbefehl wird direkt aus dem CMD im Dockerfile übernommen
 
-  [services.postgres.variables]
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
-
-  [[services.postgres.volumes]]
-  mount = "/var/lib/postgresql/data"
-  name = "postgres-data"
-
-# Trading Bot Service
-[[services]]
-name = "trading-bot"
-image = "aureumvictoria/unCodedBotDocker:latest"
-
-  [services.trading-bot.variables]
-  # Internal Railway connection to Postgres
-  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT = "5432"
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DATABASE_URL = "${postgres.RAILWAY_URL}"
-  DOCKER_ENV = "true"
-  # Binance API placeholders
-  API_KEY = ""
-  API_SECRET = ""
-
-  [services.trading-bot.deploy]
-  restartPolicyType = "ON_FAILURE"
-  restartPolicyMaxRetries = 10
-
-# Telegram Bot Service  
+# --- Definition des Telegram-Bot-Dienstes ---
 [[services]]
 name = "telegram-bot"
-image = "aureumvictoria/unCodedBotDocker:latest"
+dockerfilePath = "./telegram-bot/Dockerfile" # Stelle sicher, dass dieser Pfad und die Datei existieren
+# Der Startbefehl wird direkt aus dem CMD im Dockerfile übernommen
 
-  [services.telegram-bot.variables]
-  # Internal Railway connection to Postgres
-  POSTGRES_HOST = "${postgres.RAILWAY_PRIVATE_DOMAIN}"
-  POSTGRES_PORT = "5432"
-  POSTGRES_DB = "tradingbot"
-  POSTGRES_USER = "postgres"
-  POSTGRES_PASSWORD = "${postgres.POSTGRES_PASSWORD}"
-  DATABASE_URL = "${postgres.RAILWAY_URL}"
-  # Telegram placeholders
-  TELEGRAM_BOT_TOKEN = ""
-  TELEGRAM_GROUP_ID = ""
-  TELEGRAM_OWNER_ID = ""
-
-  [services.telegram-bot.deploy]
-  restartPolicyType = "ON_FAILURE"
-  restartPolicyMaxRetries = 5
+# --- Definition des Datenbank-Dienstes ---
+[plugins.postgres]
+# Dies erstellt automatisch einen von Railway verwalteten PostgreSQL-Dienst
