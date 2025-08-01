@@ -1,15 +1,14 @@
-# UnCoded Trading Bot - Finale Railway Konfiguration
+# UnCoded Trading Bot - Finale Railway Konfiguration für Docker Hub
 [build]
-builder = "NIXPACKS"
+builder = "NIXPACKS" # Wird ignoriert, da wir fertige Images verwenden, aber schadet nicht
 
 # Service 1: PostgreSQL Datenbank
-# Wir nennen den Service hier "trading-postgres", um Klarheit zu schaffen
 [[services]]
 name = "trading-postgres"
 image = "postgres:16-alpine"
 restartPolicy = "on-failure"
   [services.trading-postgres.variables]
-  POSTGRES_DB = "railway" # Name der DB laut deinen Variablen
+  POSTGRES_DB = "railway"
   POSTGRES_USER = "postgres"
   POSTGRES_PASSWORD = "${RAILWAY_PASSWORD}"
   [[services.trading-postgres.volumes]]
@@ -19,10 +18,10 @@ restartPolicy = "on-failure"
 # Service 2: Der Trading-Bot
 [[services]]
 name = "trading-bot"
-image = "./"
+# KORREKTUR: Verweist auf dein Image auf Docker Hub
+image = "aureumvictoria/trading-bot-secure:latest"
 restartPolicy = "on-failure"
   [services.trading-bot.variables]
-  # Korrekte Verknüpfung mit dem Namen "trading-postgres"
   POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
   POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
   POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
@@ -30,25 +29,23 @@ restartPolicy = "on-failure"
   POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
   DATABASE_URL = "${{trading-postgres.DATABASE_URL}}"
   DOCKER_ENV = "true"
-  # Secrets werden aus dem Dashboard geladen
   API_KEY = "${{API_KEY}}" 
   API_SECRET = "${{API_SECRET}}"
 
 # Service 3: Der Telegram-Bot
 [[services]]
 name = "telegram-bot"
-image = "./"
-startCommand = "node tgbot.js"
+# KORREKTUR: Verweist auf dein Image auf Docker Hub
+image = "aureumvictoria/telegram-bot-secure:latest"
+# startCommand wird nicht mehr benötigt, da es im Dockerfile definiert ist
 restartPolicy = "on-failure"
   [services.telegram-bot.variables]
-  # KORRIGIERT: Auch hier die korrekte Verknüpfung mit dem Namen "trading-postgres"
   POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
   POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
   POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
   POSTGRES_USER = "${{trading-postgres.PGUSER}}"
   POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
   DATABASE_URL = "${{trading-postgres.DATABASE_URL}}"
-  # Secrets werden aus dem Dashboard geladen
   TELEGRAM_BOT_TOKEN = "${{TELEGRAM_BOT_TOKEN}}"
   TELEGRAM_GROUP_ID = "${{TELEGRAM_GROUP_ID}}"
   TELEGRAM_OWNER_ID = "${{TELEGRAM_OWNER_ID}}"
