@@ -1,10 +1,6 @@
 # railway.toml
-# Finale, korrigierte Konfiguration.
-# Diese Datei erstellt die Dienste UND stellt die Verbindung zur Datenbank automatisch her.
-
-# Globale Build-Einstellungen
-[build]
-builder = "DOCKER"
+# Gefixte Konfiguration für den Deploy von Docker Hub.
+# Diese Datei holt die fertigen Images von Docker Hub und verbindet sie mit der Datenbank.
 
 # Globale Deployment-Einstellungen
 [deploy]
@@ -14,16 +10,18 @@ restartPolicyMaxRetries = 10
 # --- Definition des Trading-Bot-Dienstes ---
 [[services]]
 name = "trading-bot"
-dockerfilePath = "./trading-bot/Dockerfile"
+# Holt das fertige Image von Docker Hub.
+image = "aureumvictoria/trading-bot-secure:latest"
 
 # --- Definition des Telegram-Bot-Dienstes ---
 [[services]]
 name = "telegram-bot"
-dockerfilePath = "./telegram-bot/Dockerfile"
+# Holt das fertige Image von Docker Hub.
+image = "aureumvictoria/telegram-bot-secure:latest"
 
 # --- Definition des Datenbank-Dienstes ---
 # Erstellt einen von Railway verwalteten PostgreSQL-Dienst.
-# Basierend auf Ihrem Screenshot wird dieser Dienst "trading-postgres" heißen.
+# Wir geben ihm den Namen "trading-postgres", damit die Referenzen unten funktionieren.
 [plugins.postgres]
 name = "trading-postgres"
 
