@@ -5,6 +5,10 @@
     "restartPolicyMaxRetries": 10,
     "services": [
       {
+        "name": "trading-postgres",
+        "plugin": "postgresql"
+      },
+      {
         "name": "trading-bot",
         "image": "aureumvictoria/trading-bot-secure:latest",
         "variables": {
@@ -31,10 +35,6 @@
           "TELEGRAM_GROUP_ID": "",
           "TELEGRAM_OWNER_ID": ""
         }
-      },
-      {
-        "name": "trading-postgres",
-        "plugin": "postgresql"
       }
     ]
   }
