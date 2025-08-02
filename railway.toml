@@ -1,0 +1,51 @@
+# railway.toml
+# Finale, korrigierte Konfiguration für die vollautomatische Bereitstellung.
+# Diese Datei erstellt alle Dienste und stellt die Datenbankverbindung automatisch her.
+
+# Globale Deployment-Einstellungen
+[deploy]
+restartPolicy = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# --- Definition des Datenbank-Dienstes ---
+# Wird zuerst definiert, um die Verfügbarkeit der Variablen zu gewährleisten.
+[plugins.postgres]
+name = "trading-postgres"
+
+# --- Definition des Trading-Bot-Dienstes ---
+[[services]]
+name = "trading-bot"
+image = "aureumvictoria/trading-bot-secure:latest"
+
+# --- Definition des Telegram-Bot-Dienstes ---
+[[services]]
+name = "telegram-bot"
+image = "aureumvictoria/telegram-bot-secure:latest"
+
+
+# --- Variablen für den Trading-Bot ---
+# Diese Sektion verknüpft den "trading-bot"-Dienst mit den Datenbank-Variablen.
+[services.trading-bot.variables]
+POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
+POSTGRES_USER = "${{trading-postgres.PGUSER}}"
+POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
+POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
+POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
+DOCKER_ENV = "true"
+# WICHTIG: Setzen Sie Ihre echten API-Keys in der Railway-Weboberfläche!
+API_KEY = ""
+API_SECRET = ""
+
+
+# --- Variablen für den Telegram-Bot ---
+# Diese Sektion verknüpft den "telegram-bot"-Dienst mit den Datenbank-Variablen.
+[services.telegram-bot.variables]
+POSTGRES_HOST = "${{trading-postgres.PGHOST}}"
+POSTGRES_USER = "${{trading-postgres.PGUSER}}"
+POSTGRES_PASSWORD = "${{trading-postgres.PGPASSWORD}}"
+POSTGRES_DB = "${{trading-postgres.PGDATABASE}}"
+POSTGRES_PORT = "${{trading-postgres.PGPORT}}"
+# WICHTIG: Setzen Sie Ihre echten Telegram-Secrets in der Railway-Weboberfläche!
+TELEGRAM_BOT_TOKEN = ""
+TELEGRAM_GROUP_ID = ""
+TELEGRAM_OWNER_ID = ""
